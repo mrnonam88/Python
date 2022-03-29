@@ -1,4 +1,4 @@
-from Python.resources.cells import *
+from resources.cells import *
 
 
 class Button:

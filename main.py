@@ -33,8 +33,8 @@ class World:
         self.cells = set(sorted(cells, reverse=True))
 
     def draw(self):
-        # self.space.fill(self.base_color)
-        for x, y in self.updates:
+        self.space.fill(self.base_color)
+        for x, y in self.cells:
             rect = self.celling[x][y]
             pygame.draw.rect(self.space, rect.color, rect_convert((x, y)))
             if CELL_SIZE == 1:

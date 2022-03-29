@@ -1,4 +1,4 @@
-from Python.resources.settings import *
+from resources.settings import *
 
 
 class Solid(enum.Enum):
