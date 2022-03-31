@@ -36,9 +36,10 @@ class World:
         self.space.fill(self.base_color)
         for x, y in self.cells:
             rect = self.celling[x][y]
-            pygame.draw.rect(self.space, rect.color, rect_convert((x, y)))
             if CELL_SIZE == 1:
                 self.space.set_at((x, y), rect.color)
+            else:
+                pygame.draw.rect(self.space, rect.color, rect_convert((x, y)))
 
     def in_bounds(self, x, y):
         if x < 0 or y < 0 or x >= self.width or y >= self.height:
