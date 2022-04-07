@@ -69,7 +69,7 @@ minus_icon_pos = WINDOW_WIDTH - int(minus_icon_width) - UI_BORDERLINE, int(WINDO
 # clear button
 clear_icon_ref = pygame.image.load("resources/reset_icon.png")
 clear_icon_ref_width, clear_icon_ref_height = clear_icon_ref.get_size()
-clear_icon_scale = (2*UI_COL_SIZE - UI_BORDERLINE) / clear_icon_ref_width
+clear_icon_scale = (2 * UI_COL_SIZE - UI_BORDERLINE) / clear_icon_ref_width
 clear_icon_size = clear_icon_width, clear_icon_height = int(clear_icon_ref_width * clear_icon_scale), \
                                                         int(clear_icon_ref_height * clear_icon_scale)
 clear_icon = pygame.transform.scale(clear_icon_ref,
@@ -80,8 +80,11 @@ clear_icon_pos = WINDOW_WIDTH - 2 * UI_COL_SIZE - UI_BORDERLINE, 0
 size_attr_pos = (plus_icon_pos[0] + minus_icon_pos[0]) // 2, int(plus_icon_pos[1] + plus_icon_height)
 
 # colors
-EMPTY_COLOR = pygame.Color((58, 56, 69))
-SAND_COLOR = pygame.Color((198, 155, 123))
+# EMPTY_COLOR = pygame.Color((58, 56, 69, 100))
+EMPTY_COLOR = pygame.Color((7, 59, 76))
+# EMPTY_COLOR = pygame.Color((4, 33, 43))
+# SAND_COLOR = pygame.Color((198, 155, 123))
+SAND_COLOR = pygame.Color((96, 54, 10))
 FONT_COLOR = pygame.Color((255, 255, 255))
 WATER_COLOR = pygame.Color((108, 150, 220))
 

@@ -1,4 +1,8 @@
-from resources.interface import *
+import pygame
+
+from resources.cells import EmptyCell, Cell
+from resources.interface import Interface
+from resources.settings import WORLD_SIZE, rect_convert, CELL_SIZE
 
 
 class World:
