@@ -1,18 +1,18 @@
-import pygame
-
-from resources.cells import EmptyCell, Cell
+from resources.settings import pygame
+from resources.cells import EmptyCell, Cell, CellType
 from resources.interface import Interface
-from resources.settings import WORLD_SIZE, rect_convert, CELL_SIZE
+from resources.settings import CELL_SIZE, PALETTE, FONT, WORLD_HEIGHT, WORLD_WIDTH
+from resources.settings import set_fps, rect_convert
 
 
 class World:
     def __init__(self, inter):
-        self.width, self.height = WORLD_SIZE
+        self.width, self.height = WORLD_WIDTH, WORLD_HEIGHT
         self.space = inter.screen
-        self.cells = set()
         self.celling = [[Cell] * self.height for _ in range(self.width)]
-        self.base_color = EmptyCell((0, 0)).color
+        self.moving_cells = set()
         self.updates = set()
+        self.base_color = EmptyCell((0, 0)).color
         self.start()
 
     def start(self):
@@ -22,28 +22,19 @@ class World:
                 self.celling[i][j] = EmptyCell((i, j))
 
     def update(self):
-        self.updates = set()
-        copy = self.cells.copy()
-        for cell_pos in copy:
-            self.celling[cell_pos[0]][cell_pos[1]].behave(self)
-        self.update_cells()
-
-    def update_cells(self):
-        cells = set()
-        for x, y in self.cells:
-            if self.celling[x][y].should_store(self):
-                cells.add((x, y))
-        cells = set(sorted(cells))
-        self.cells = set(sorted(cells, reverse=True))
+        copy = self.moving_cells.copy()
+        self.moving_cells = set()
+        for cell in copy:
+            cell.behave(self)
+        self.moving_cells = set(sorted(self.moving_cells, reverse=True, key=lambda comp_cell: comp_cell.pos))
 
     def draw(self):
-        self.space.fill(self.base_color)
-        for x, y in self.cells:
-            rect = self.celling[x][y]
+        for cell in self.updates:
             if CELL_SIZE == 1:
-                self.space.set_at((x, y), rect.color)
+                self.space.set_at(cell.pos, cell.color)
             else:
-                pygame.draw.rect(self.space, rect.color, rect_convert((x, y)))
+                pygame.draw.rect(self.space, cell.color, rect_convert(cell.pos))
+        self.updates = set()
 
     def in_bounds(self, x, y):
         if x < 0 or y < 0 or x >= self.width or y >= self.height:
@@ -53,29 +44,56 @@ class World:
     def swap(self, pos_1, pos_2):
         self.celling[pos_1[0]][pos_1[1]], self.celling[pos_2[0]][pos_2[1]] = self.celling[pos_2[0]][pos_2[1]], \
                                                                              self.celling[pos_1[0]][pos_1[1]]
-        self.celling[pos_1[0]][pos_1[1]].update_pos(pos_1)
-        self.celling[pos_2[0]][pos_2[1]].update_pos(pos_2)
-        self.cells.add(pos_2)
-        self.updates.add(pos_1)
-        self.updates.add(pos_2)
+        self.at(pos_1).update_pos(pos_1)
+        self.at(pos_2).update_pos(pos_2)
+        self.updates.add(self.at(pos_1))
+        self.updates.add(self.at(pos_2))
 
     def append(self, new_cell):
-        if self.in_bounds(new_cell.x, new_cell.y):
+        if self.in_bounds(new_cell.x, new_cell.y) and self.at(new_cell.pos).type == CellType.empty:
             self.celling[new_cell.x][new_cell.y] = new_cell
-            self.cells.add((new_cell.x, new_cell.y))
-            self.updates.add((new_cell.x, new_cell.y))
+            self.moving_cells.add(self.celling[new_cell.x][new_cell.y])
+            self.updates.add(new_cell)
+            self.at(new_cell.pos).reflect(self)
+
+    def remove(self, cell):
+        if self.in_bounds(cell.x, cell.y):
+            self.celling[cell.x][cell.y] = EmptyCell(cell.pos)
+            self.updates.add(self.at(cell.pos))
+
+    def at(self, position):
+        if self.in_bounds(position[0], position[1]):
+            return self.celling[position[0]][position[1]]
+        return EmptyCell((0, 0))
 
     def iterate(self):
-        self.draw()
         self.update()
+        self.draw()
 
 
 interface = Interface()
-world = World(interface)
+menu_running = True
 running = True
-# world.append(WaterCell((10, 10)))
+
+while menu_running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            menu_running = False
+            running = False
+    if pygame.mouse.get_pressed()[0]:
+        pos = pygame.mouse.get_pos()
+        if PALETTE.set_palette(pos):
+            menu_running = False
+    text = FONT.render("CHOOSE PALETTE", True, PALETTE.get_color("FONT_COLOR"))
+    PALETTE.draw_palettes(interface.screen)
+    interface.screen.blit(text, (PALETTE.pos[0], PALETTE.size[1] // 2))
+    pygame.display.flip()
+
+world = World(interface)
 while running:
+    world.iterate()
     running = interface.iterate(running, world)
     if interface.clear_button.is_clicked():
         world = World(interface)
-    world.iterate()
+    set_fps()
+    pygame.display.flip()
