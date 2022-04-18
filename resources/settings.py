@@ -2,19 +2,22 @@
 
 # imports
 import pygame
+import math
 import abc
 import enum
 import random
 
 # Game Settings
-WINDOW_WIDTH = 1020
-WINDOW_HEIGHT = 720
+WINDOW_WIDTH = 1440
+WINDOW_HEIGHT = 960
 CLOCK = pygame.time.Clock()
-CELL_SIZE = 5
+CELL_SIZE = 6
 WORLD_SIZE = WORLD_WIDTH, WORLD_HEIGHT = WINDOW_WIDTH // CELL_SIZE, WINDOW_HEIGHT // CELL_SIZE
 FPS = 120
 MAX_INS_SIZE = 10
 pygame.init()
+pygame.mixer.init()
+idle_theme = pygame.mixer.Sound('resources/Elevator_Music.mp3')
 
 # UI settings
 FONT = pygame.font.SysFont('pixel', 20)
@@ -139,7 +142,7 @@ class Palette:
                 "DIRT_COLOR": pygame.Color((24, 3, 15))
             }, {
                 "EMPTY_COLOR": pygame.Color((222, 192, 224)),
-                "SAND_COLOR": pygame.Color((231, 194, 129)),
+                "SAND_COLOR": pygame.Color((251, 194, 129)),
                 "FONT_COLOR": pygame.Color((12, 14, 55)),
                 "WATER_COLOR": pygame.Color((161, 184, 209)),
                 "DIRT_COLOR": pygame.Color((88, 82, 71))

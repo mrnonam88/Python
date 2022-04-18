@@ -217,6 +217,7 @@ class Interface:
 
         if self.ins_size.action():
             self.set_clicked = True
+            pygame.time.wait(100)
         if self.clear_button.is_clicked():
             self.set_clicked = True
         if not self.set_clicked:

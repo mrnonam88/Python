@@ -1,4 +1,4 @@
-from resources.settings import abc, enum, random
+from resources.settings import abc, enum, random, pygame
 from resources.settings import PALETTE
 from resources.settings import toss
 

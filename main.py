@@ -1,8 +1,9 @@
-from resources.settings import pygame
+from resources.settings import pygame, math
 from resources.cells import EmptyCell, Cell, CellType
 from resources.interface import Interface
 from resources.settings import CELL_SIZE, PALETTE, FONT, WORLD_HEIGHT, WORLD_WIDTH
 from resources.settings import set_fps, rect_convert
+from resources.settings import idle_theme
 
 
 class World:
@@ -74,6 +75,8 @@ class World:
 interface = Interface()
 menu_running = True
 running = True
+pygame.mixer.Sound.play(idle_theme)
+volume = 0
 
 while menu_running:
     for event in pygame.event.get():
@@ -88,8 +91,12 @@ while menu_running:
     PALETTE.draw_palettes(interface.screen)
     interface.screen.blit(text, (PALETTE.pos[0], PALETTE.size[1] // 2))
     pygame.display.flip()
+    if volume != 100:
+        idle_theme.set_volume(math.sin(math.radians(volume ** 2)))
+        volume += .0015
 
 world = World(interface)
+
 while running:
     world.iterate()
     running = interface.iterate(running, world)
@@ -97,3 +104,6 @@ while running:
         world = World(interface)
     set_fps()
     pygame.display.flip()
+    if volume != 100:
+        idle_theme.set_volume(math.sin(math.radians(volume ** 2)))
+        volume += .0015
